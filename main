@@ -1,0 +1,184 @@
+import itertools, hashlib, string
+
+flag = 0
+
+def input_hash():
+    while True:
+        print("----------****This is a password cracking tool******---------")
+        print()
+        print('press "1" to crack "md5" hash password------------:')
+        print('press "2" to crack "sha1" hash password------------:')
+        print('press "3" to crack "sha224" hash password------------:')
+        print('press "4" to crack "sha256" hash password------------:')
+        print('press "5" to crack "sha384" hash password------------:')
+        print('press "6" to crack "sha512" hash password------------:')
+        print('press "7" to "Quit"------------:')
+        choice = input("Enter choice: 1 or 2 or 3 or 4 or 5 or 6 or 7: ")
+        print(choice)
+        if choice == "1":
+            hash_password = input("Enter md5 hash: ")
+            len1 = len(hash_password)
+            if len1 == 32:
+               type_of_attack(hash_password, choice)
+            else:
+               print(len1)
+               print("Please Enter Right md5 hash value")
+               print("")
+               input_hash()
+            break
+        elif choice == "2":
+            hash_password = input("Enter sha1 hash: ")
+            len1 = len(hash_password)
+            if len1 == 40:
+                type_of_attack(hash_password, choice)
+            else:
+                print(len1)
+                print("Please Enter Right sha1 hash value")
+                print("")
+                input_hash()
+            break
+        elif choice == "3":
+            hash_password = input("Enter sha224 hash: ")
+            len1 = len(hash_password)
+            if len1 == 56:
+                type_of_attack(hash_password, choice)
+            else:
+                print(len1)
+                print("Please Enter Right sha224 hash value")
+                print("")
+                input_hash()
+            break
+        elif choice == "4":
+            hash_password = input("Enter sha256 hash: ")
+            len1 = len(hash_password)
+            if len1 == 64:
+                type_of_attack(hash_password, choice)
+            else:
+                print(len1)
+                print("Please Enter Right sha256 hash value")
+                print("")
+                input_hash()
+            break
+        elif choice == "5":
+            hash_password = input("Enter sha384 hash: ")
+            len1 = len(hash_password)
+            if len1 == 96:
+                type_of_attack(hash_password, choice)
+            else:
+                print(len1)
+                print("Please Enter Right sha384 hash value")
+                print("")
+                input_hash()
+            break
+        elif choice == "6":
+            hash_password = input("Enter sha512 hash: ")
+            len1 = len(hash_password)
+            if len1 == 128:
+                type_of_attack(hash_password, choice)
+            else:
+                print(len1)
+                print("Please Enter Right sha512 hash value")
+                print("")
+                input_hash()
+            break
+        elif choice == "7":
+            quit()
+
+def type_of_attack(hash_password, algo):
+    while True:
+        print("Which Type of attack you want to perform: ")
+        print('Press "1" to perform Dictionary Attack---------:')
+        print('Press "2" to perform Brute Force Attack---------:')
+        print('Press "3" to perform Dictionary Attack+Brute Force Attack---------:')
+        print('Press "4" to "Quit"---------:')
+        choice = input("Enter Choice : 1 or 2 or 3 or 4: ")
+        if choice == "1":
+            dictionary_password_cracker(hash_password, algo)
+            break
+        elif choice == "2":
+            brute_force_password_cracker(hash_password, algo)
+            break
+        elif choice == "3":
+            dictionary_password_cracker(hash_password,algo)
+            if flag == 0:
+                brute_force_password_cracker(hash_password,algo)
+            break
+        elif choice == "4":
+            quit()
+    if flag == 0:
+        print("sorry, Password Not Found")
+
+def dictionary_password_cracker(pass_hash, algorithm):
+    word_file = input("Enter full path namer of directory ,file or only directory file name if file is in current directory: ")
+    try:
+        word_file_open = open(word_file, "r")
+    except:
+        print("File not found")
+        quit()
+
+    for each_word in word_file_open:
+        enc_word = each_word.encode('utf-8')
+        if algorithm == "1":
+            digest = hashlib.md5(enc_word.strip()).hexdigest()
+        elif algorithm == "2":
+            digest = hashlib.sha1(enc_word.strip()).hexdigest()
+        elif algorithm == "3":
+            digest = hashlib.sha224(enc_word.strip()).hexdigest()
+        elif algorithm == "4":
+            digest = hashlib.sha256(enc_word.strip()).hexdigest()
+        elif algorithm == "5":
+            digest = hashlib.sha384(enc_word.strip()).hexdigest()
+        elif algorithm == "6":
+            digest = hashlib.sha512(enc_word.strip()).hexdigest()
+        if digest == pass_hash:
+            print("------**CRACKED THROUGH DICTIONARY ATTACK*-----")
+            print()
+            print(f"Given password hash = {pass_hash}")
+            print("Digest calculated=  " + digest)
+            print("Congratulations Hash Matched---------- PASSWORD FOUND")
+            print(f"Password is:{each_word}")
+            global flag
+            flag = 1
+            break
+    if flag == 0:
+        print("Sorry password not found through Dictionary Attack")
+
+def brute_force_password_cracker(pass_hash, algorithm):
+    chars = string.ascii_lowercase + string.ascii_uppercase + string.digits + "!~@#$%^&*()<>,.?/;'{}_-+"
+    #print(chars)
+    attempts = 0
+    for password_length in range(1, 100):
+        for guess in itertools.product(chars, repeat=password_length):
+            attempts += 1
+            guess = ''.join(guess)
+            #print(guess)
+            enc_word = guess.encode('utf-8')
+            if algorithm == "1":
+                digest = hashlib.md5(enc_word.strip()).hexdigest()
+            elif algorithm == "2":
+                digest = hashlib.sha1(enc_word.strip()).hexdigest()
+            elif algorithm == "3":
+                digest = hashlib.sha224(enc_word.strip()).hexdigest()
+            elif algorithm == "4":
+                digest = hashlib.sha256(enc_word.strip()).hexdigest()
+            elif algorithm == "5":
+                digest = hashlib.sha384(enc_word.strip()).hexdigest()
+            elif algorithm == "6":
+                digest = hashlib.sha512(enc_word.strip()).hexdigest()
+            if digest == pass_hash:
+                print("------**CRACKED THROUGH BRUTE FORCE ATTACK*-----")
+                print()
+                print(f"Given password hash = {pass_hash}")
+                print("Digest calculated=  " + digest)
+                print("Total no. of attempts= : " + str(attempts))
+                print("Congratulations Hash Matched---------- PASSWORD FOUND")
+                print(f"Password is:{guess}")
+                global flag
+                flag = 1
+                break
+        if flag == 1:
+            break
+    if flag == 0:
+        print("Sorry password crack through Brute Force Attack")
+
+input_hash()
